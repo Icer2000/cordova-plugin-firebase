@@ -75,8 +75,12 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
 
     private void sendNotification(String id, String title, String messageBody, Map<String, String> data, boolean showNotification) {
         Bundle bundle = new Bundle();
+        String groupKey = null;
         for (String key : data.keySet()) {
             bundle.putString(key, data.get(key));
+            if (key == "groupKey") {
+                groupKey = data.get(key);                
+            }
         }
         if (showNotification) {
             Intent intent = new Intent(this, OnNotificationOpenReceiver.class);
@@ -91,7 +95,8 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(messageBody))
                     .setAutoCancel(true)
                     .setSound(defaultSoundUri)
-                    .setContentIntent(pendingIntent);
+                    .setContentIntent(pendingIntent)
+                    .setGroup(groupKey);
 
             int resID = getResources().getIdentifier("notification_icon", "drawable", getPackageName());
             if (resID != 0) {
